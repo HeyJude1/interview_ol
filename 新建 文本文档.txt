@@ -1,0 +1,25 @@
+👉 项目介绍
+
+这是一个集成大语言模型（LLM）能力的智能技术交流平台。除了传统的论坛功能（发布、搜索、管理），核心亮点在于构建了基于社区内容的 AI 助手，通过 RAG 技术为用户提供精准的语义搜索、知识问答以及自动化的内容总结服务。
+
+👉技术栈（根据实际项目进行调整）
+
+Java 21 + Spring Boot 4.0 + MyBatis-Plus + PostgreSQL + pgvector + Redis+ Elasticsearch + Canal
+
+👉工作职责（尽量不要照搬）：
+
+1. 深度集成 Spring AI 与 PostgreSQL + pgvector，基于 HNSW 索引构建向量库，支撑社区文章的语义检索与知识问答功能。
+2. 基于 RISEN 框架设计结构化提示词体系，利用 PromptTemplate 动态填充上下文，并通过 BeanOutputConverter 实现业务级的结构化 JSON 输出。
+3. 对接阿里 DashScope 大模型，利用长文本处理能力实现文章一键摘要提取与高准确度智能标签推荐，显著提升内容生产效率。
+4. 基于 PostgreSQL Outbox + RabbitMQ 构建异步向量化流水线，通过多维度版本控制（source/model/chunk）实现幂等更新与乱序保护，配合重试、DLQ、定时对账保证最终一致性。
+5. 设计 ES 全文搜索与 pgvector 语义检索的混合架构，利用 RRF 算法实现结果重排，将复杂技术问题的召回准确率提升 40%。
+6. 基于 Spring WebFlux 与 SSE 实现 AI 对话流式响应，对接大模型 Streaming API，提供逐字生成的实时交互体验。
+7. 封装 Redis + Lua 分布式限流组件，实现多维度（全局/IP/用户）令牌桶算法，有效控制高成本 AI 接口调用频率，规避 Token 资源浪费。
+8. 实现 DFA 敏感词过滤，覆盖博客/评论/私信等 UGC 场景，支持词库热更新与分级拦截策略（替换/提示/拒绝）。
+9. 利用 Redis HyperLogLog 实现海量 UV 统计，结合 Sorted Set 实现热度榜单；通过 XXL-JOB 异步计算热度分值（时间衰减、互动权重等）并支持定时刷新与回放校准。
+10. 基于 Spring Security + JWT 实现多端登录态管理，支持同端互斥登录与强制下线，保障社区私有资源与 VIP 文章访问安全。
+
+👉 可优化/修改点分析（AI 方向）
+
+1. 语义化内容审核： 传统的敏感词过滤（DFA）无法识别隐晦违规。可以引入轻量级 LLM 进行内容情感分析与合规检测，作为传统敏感词过滤的补充。
+2. 异步补偿机制： AI 向量化过程可能失败。建议引入任务表，结合 Redis Stream 或 RabbitMQ 实现失败重试，确保数据库与向量库的最终一致性。
