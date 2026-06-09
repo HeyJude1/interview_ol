@@ -4,6 +4,7 @@ import {historyApi, ResumeListItem} from '../api/history';
 import DeleteConfirmDialog from '../components/DeleteConfirmDialog';
 import {formatDateOnly} from '../utils/date';
 import {getScoreProgressColor} from '../utils/score';
+import {ChevronRight, FileText, LibraryBig, Search, Trash2} from 'lucide-react';
 
 interface HistoryListProps {
   onSelectResume: (id: number) => void;
@@ -67,40 +68,41 @@ export default function HistoryList({ onSelectResume }: HistoryListProps) {
       animate={{ opacity: 1 }}
     >
       {/* 头部 */}
-      <div className="flex justify-between items-start mb-10 flex-wrap gap-6">
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-6">
         <div>
+          <p className="page-kicker mb-3">Resume Library</p>
             <motion.h1
-                className="text-4xl font-bold text-slate-900 dark:text-white mb-2"
+                className="flex items-center gap-3 text-3xl font-black tracking-tight text-slate-950 dark:text-white md:text-4xl"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            简历库
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-primary-300 dark:bg-primary-400 dark:text-slate-950">
+              <LibraryBig className="h-6 w-6" />
+            </span>
+            档案看板
           </motion.h1>
             <motion.p
-                className="text-slate-500 dark:text-slate-400"
+                className="mt-3 max-w-2xl text-slate-600 dark:text-slate-400"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.1 }}
           >
-            管理您已分析过的所有简历及面试记录
+            按候选材料追踪诊断状态、评分信号和后续演练
           </motion.p>
         </div>
 
           <motion.div
-              className="flex items-center gap-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 min-w-[280px] focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-100 transition-all"
+              className="app-input flex min-w-[280px] items-center gap-3 rounded-2xl px-4 py-3"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
         >
-          <svg className="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none">
-            <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
-            <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-          </svg>
+          <Search className="h-5 w-5 text-slate-400" />
           <input
             type="text"
-            placeholder="搜索简历..."
+            placeholder="搜索档案..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 outline-none text-slate-700 placeholder:text-slate-400"
+            className="flex-1 bg-transparent text-slate-700 outline-none placeholder:text-slate-400 dark:text-slate-100"
           />
         </motion.div>
       </div>
@@ -120,125 +122,103 @@ export default function HistoryList({ onSelectResume }: HistoryListProps) {
       {/* 空状态 */}
       {!loading && filteredResumes.length === 0 && (
           <motion.div
-              className="text-center py-20 bg-white dark:bg-slate-800 rounded-2xl"
+              className="app-card py-20 text-center"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <div className="text-6xl mb-6">📄</div>
-              <h3 className="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-2">暂无简历记录</h3>
-              <p className="text-slate-500 dark:text-slate-400">上传简历开始您的第一次 AI 面试分析</p>
+          <FileText className="mx-auto mb-6 h-16 w-16 text-primary-500" />
+              <h3 className="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-2">暂无候选档案</h3>
+              <p className="text-slate-500 dark:text-slate-400">导入材料后，这里会生成第一份诊断档案</p>
         </motion.div>
       )}
 
-      {/* 表格 */}
+      {/* 档案卡片流 */}
       {!loading && filteredResumes.length > 0 && (
-          <motion.div
-              className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm overflow-hidden"
+        <motion.div
+              className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <table className="w-full">
-            <thead>
-            <tr className="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-100 dark:border-slate-600">
-                <th className="text-left px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">简历名称</th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">上传日期</th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">AI
-                    评分
-                </th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">面试状态</th>
-                <th className="w-20"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <AnimatePresence>
-                {filteredResumes.map((resume, index) => (
-                  <motion.tr
-                    key={resume.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    onClick={() => onSelectResume(resume.id)}
-                    className="border-b border-slate-100 dark:border-slate-700 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition-colors group"
+          <AnimatePresence>
+            {filteredResumes.map((resume, index) => (
+              <motion.article
+                key={resume.id}
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.04 }}
+                onClick={() => onSelectResume(resume.id)}
+                className="group relative cursor-pointer overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/86 p-5 shadow-[0_18px_60px_rgba(15,23,42,0.08)] backdrop-blur-xl transition-all hover:-translate-y-1 hover:shadow-[0_28px_80px_rgba(15,23,42,0.13)] dark:border-white/10 dark:bg-slate-900/70"
+              >
+                <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary-500 via-amber-400 to-slate-950 dark:to-white/60" />
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 items-start gap-3">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-primary-300 dark:bg-primary-400 dark:text-slate-950">
+                      <FileText className="h-6 w-6" />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="truncate text-lg font-black text-slate-950 dark:text-white">{resume.filename}</h3>
+                      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">导入于 {formatDateOnly(resume.uploadedAt)}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={(e) => handleDeleteClick(resume.id, resume.filename, e)}
+                    disabled={deletingId === resume.id}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/30"
+                    title="删除档案"
                   >
-                    <td className="px-6 py-5">
-                      <div className="flex items-center gap-4">
-                          <div
-                              className="w-10 h-10 bg-primary-50 dark:bg-primary-900/30 rounded-xl flex items-center justify-center text-primary-500 dark:text-primary-400">
-                          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
-                            <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <polyline points="14,2 14,8 20,8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </div>
-                          <span className="font-medium text-slate-800 dark:text-white">{resume.filename}</span>
+                    {deletingId === resume.id ? (
+                      <motion.div
+                        className="h-5 w-5 rounded-full border-2 border-red-500 border-t-transparent"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      />
+                    ) : (
+                      <Trash2 className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
+
+                <div className="mt-6 grid grid-cols-2 gap-3">
+                  <div className="rounded-2xl bg-slate-50 p-4 dark:bg-white/5">
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Score</p>
+                    <div className="mt-2 flex items-end gap-1">
+                      <span className="text-3xl font-black text-slate-950 dark:text-white">
+                        {resume.latestScore ?? '--'}
+                      </span>
+                      <span className="pb-1 text-xs text-slate-400">/100</span>
+                    </div>
+                    {resume.latestScore !== undefined && (
+                      <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
+                        <motion.div
+                          className={`h-full rounded-full ${getScoreProgressColor(resume.latestScore)}`}
+                          initial={{ width: 0 }}
+                          animate={{ width: `${resume.latestScore}%` }}
+                          transition={{ duration: 0.7, delay: index * 0.04 }}
+                        />
                       </div>
-                    </td>
-                      <td className="px-6 py-5 text-slate-500 dark:text-slate-400">{formatDateOnly(resume.uploadedAt)}</td>
-                    <td className="px-6 py-5">
-                      {resume.latestScore !== undefined ? (
-                        <div className="flex items-center gap-3">
-                            <div className="w-20 h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                                <motion.div
-                              className={`h-full ${getScoreProgressColor(resume.latestScore)} rounded-full`}
-                              initial={{ width: 0 }}
-                              animate={{ width: `${resume.latestScore}%` }}
-                              transition={{ duration: 0.8, delay: index * 0.05 }}
-                            />
-                          </div>
-                            <span className="font-bold text-slate-800 dark:text-white">{resume.latestScore}</span>
-                        </div>
-                      ) : (
-                          <span className="text-slate-400 dark:text-slate-500">-</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-5">
-                      {resume.interviewCount > 0 ? (
-                          <span
-                              className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-900 text-emerald-600 rounded-full text-sm font-medium">
-                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
-                            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                            <polyline points="9,12 11,14 15,10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                          已完成
-                        </span>
-                      ) : (
-                          <span
-                              className="inline-flex px-3 py-1 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 rounded-full text-sm">待面试</span>
-                      )}
-                    </td>
-                    <td className="px-4">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={(e) => handleDeleteClick(resume.id, resume.filename, e)}
-                          disabled={deletingId === resume.id}
-                          className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                          title="删除简历"
-                        >
-                          {deletingId === resume.id ? (
-                            <motion.div
-                              className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full"
-                              animate={{ rotate: 360 }}
-                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                            />
-                          ) : (
-                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
-                              <path d="M3 6H5H21M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                              <path d="M10 11V17M14 11V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                          )}
-                        </button>
-                          <svg
-                              className="w-5 h-5 text-slate-300 dark:text-slate-600 group-hover:text-primary-500 group-hover:translate-x-1 transition-all"
-                              viewBox="0 0 24 24" fill="none">
-                          <polyline points="9,18 15,12 9,6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
-                    </td>
-                  </motion.tr>
-                ))}
-              </AnimatePresence>
-            </tbody>
-          </table>
+                    )}
+                  </div>
+                  <div className="rounded-2xl bg-slate-950 p-4 text-white dark:bg-primary-400 dark:text-slate-950">
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] opacity-60">Drill</p>
+                    <p className="mt-2 text-2xl font-black">{resume.interviewCount}</p>
+                    <p className="mt-1 text-xs opacity-70">演练批次</p>
+                  </div>
+                </div>
+
+                <div className="mt-5 flex items-center justify-between">
+                  {resume.interviewCount > 0 ? (
+                    <span className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">已进入演练</span>
+                  ) : (
+                    <span className="rounded-full bg-amber-50 px-3 py-1 text-sm font-semibold text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">待演练</span>
+                  )}
+                  <span className="flex items-center gap-1 text-sm font-bold text-primary-700 opacity-0 transition-opacity group-hover:opacity-100 dark:text-primary-300">
+                    查看档案 <ChevronRight className="h-4 w-4" />
+                  </span>
+                </div>
+              </motion.article>
+            ))}
+          </AnimatePresence>
         </motion.div>
       )}
 
@@ -246,18 +226,18 @@ export default function HistoryList({ onSelectResume }: HistoryListProps) {
       <DeleteConfirmDialog
         open={deleteConfirm !== null}
         item={deleteConfirm}
-        itemType="简历"
+        itemType="档案"
         loading={deletingId !== null}
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteConfirm(null)}
         customMessage={
           deleteConfirm ? (
             <>
-              <p className="mb-2">确定要删除简历 <strong>"{deleteConfirm.filename}"</strong> 吗？</p>
+              <p className="mb-2">确定要删除档案 <strong>"{deleteConfirm.filename}"</strong> 吗？</p>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">删除后将同时删除：</p>
                 <ul className="text-sm text-slate-500 dark:text-red-400 list-disc list-inside mb-2">
-                <li>简历评价记录</li>
-                <li>所有模拟面试记录</li>
+                <li>能力诊断记录</li>
+                <li>所有模拟演练记录</li>
               </ul>
               <p className="text-sm font-semibold text-red-600">此操作不可恢复！</p>
             </>

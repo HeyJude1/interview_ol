@@ -1,9 +1,7 @@
 import {useMemo} from 'react';
 import {motion} from 'framer-motion';
-import RadarChart from './RadarChart';
-import ScoreProgressBar from './ScoreProgressBar';
 import {formatDateTime} from '../utils/date';
-import {AlertCircle, CheckCircle2, Clock, Download, Loader2, RefreshCw, Target, TrendingUp,} from 'lucide-react';
+import {AlertCircle, CheckCircle2, Clock, Loader2, RefreshCw, TrendingUp,} from 'lucide-react';
 import type {AnalyzeStatus} from '../api/history';
 
 interface AnalysisPanelProps {
@@ -199,192 +197,111 @@ export default function AnalysisPanel({
     );
   }
 
-  const projectScore = analysis.projectScore || 0;
-  const skillMatchScore = analysis.skillMatchScore || 0;
-  const contentScore = analysis.contentScore || 0;
-  const structureScore = analysis.structureScore || 0;
-  const expressionScore = analysis.expressionScore || 0;
-
   return (
     <div className="space-y-6">
-      {/* 核心评价和雷达图 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* 核心评价 */}
-        <motion.div
-            className="bg-white dark:bg-slate-800 rounded-2xl p-6"
-          initial={{ opacity: 0, y: 20 }}
+        <motion.section
+          className="overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-[0_26px_80px_rgba(15,23,42,0.18)] dark:bg-primary-400 dark:text-slate-950"
+          initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
         >
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-              <TrendingUp className="w-5 h-5" />
-              <span className="font-semibold">核心评价</span>
-            </div>
-            <motion.button
-              onClick={onExport}
-              disabled={exporting}
-              className="px-4 py-2 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 rounded-lg text-slate-600 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-600 transition-all disabled:opacity-50 flex items-center gap-2"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Download className="w-4 h-4" />
-              {exporting ? '导出中...' : '导出分析报告'}
-            </motion.button>
-          </div>
-
-          <div
-              className="bg-gradient-to-br from-emerald-50 dark:from-emerald-900/30 to-green-50 dark:to-slate-800 rounded-xl p-6">
-            <p className="text-lg text-slate-800 dark:text-white leading-relaxed mb-6">
-              {analysis.summary || '候选人具备扎实的技术基础，有大型项目架构经验。'}
-            </p>
-
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div className="bg-white dark:bg-slate-800 rounded-xl p-5">
-                <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 block mb-2">总分</span>
-                <span className="text-4xl font-bold text-slate-900 dark:text-white">{analysis.overallScore || 0}</span>
-                <span className="text-sm text-slate-500 dark:text-slate-400">/ 100</span>
+          <div className="grid gap-0 lg:grid-cols-[1fr_210px]">
+            <div className="p-7 md:p-9">
+              <div className="flex items-center gap-2 opacity-70">
+                <TrendingUp className="h-5 w-5" />
+                <span className="font-black">诊断结论</span>
               </div>
-              <div className="bg-white dark:bg-slate-800 rounded-xl p-5">
-                <span
-                    className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 block mb-2">分析时间</span>
-                <span className="text-sm text-slate-700 dark:text-slate-300">
-                  {formatDateTime(analysis.analyzedAt)}
+              <p className="mt-5 max-w-5xl text-2xl font-black leading-10 md:text-3xl md:leading-[3rem]">
+                {analysis.summary || '候选人具备扎实的技术基础，有大型项目架构经验。'}
+              </p>
+              <div className="mt-7 flex flex-wrap gap-3 text-sm">
+                <span className="rounded-full bg-white/10 px-3 py-1.5">分析时间 {formatDateTime(analysis.analyzedAt)}</span>
+                <span className="rounded-full bg-primary-300 px-3 py-1.5 font-bold text-slate-950 dark:bg-slate-950 dark:text-primary-300">
+                  {analysis.suggestions?.length || 0} 条改进线索
                 </span>
               </div>
             </div>
-
-            {/* 优势标签 */}
-            {analysis.strengths && analysis.strengths.length > 0 && (
-                <div className="bg-white dark:bg-slate-800 rounded-xl p-4">
-                  <span
-                      className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 block mb-3">优势亮点</span>
-                <div className="flex flex-wrap gap-2">
-                  {analysis.strengths.map((s: string, i: number) => (
-                      <span key={i}
-                            className="px-3 py-1.5 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-lg text-sm font-medium">
-                      {s}
-                    </span>
-                  ))}
-                </div>
+            <div className="flex items-center justify-center border-t border-white/10 bg-white/8 p-7 lg:border-l lg:border-t-0 dark:bg-slate-950/10">
+              <div className="text-center">
+                <div className="text-7xl font-black leading-none">{analysis.overallScore || 0}</div>
+                <div className="mt-2 text-xs font-black uppercase tracking-[0.24em] opacity-60">Score</div>
+                <motion.button
+                  onClick={onExport}
+                  disabled={exporting}
+                  className="mt-6 rounded-2xl bg-white px-4 py-3 text-sm font-black text-slate-950 transition-all hover:bg-primary-100 disabled:opacity-50 dark:bg-slate-950 dark:text-primary-300"
+                  whileTap={{ scale: exporting ? 1 : 0.98 }}
+                >
+                  {exporting ? '导出中...' : '导出报告'}
+                </motion.button>
               </div>
-            )}
+            </div>
           </div>
-        </motion.div>
+        </motion.section>
 
-        {/* 多维度评分雷达图 */}
-        <motion.div
-            className="bg-white dark:bg-slate-800 rounded-2xl p-6"
-          initial={{ opacity: 0, y: 20 }}
+        <motion.section
+          className="grid gap-3 md:grid-cols-2 xl:grid-cols-5"
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+        >
+          {radarData.map((item, index) => (
+            <div key={item.subject} className="rounded-[1.4rem] border border-white/70 bg-white/82 p-5 shadow-sm dark:border-white/10 dark:bg-slate-900/70">
+              <p className="text-sm font-black text-slate-900 dark:text-white">{item.subject}</p>
+              <p className="mt-3 text-2xl font-black text-slate-950 dark:text-white">{item.score}<span className="text-xs text-slate-400">/{item.fullMark}</span></p>
+              <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
+                <motion.div
+                  className="h-full rounded-full bg-slate-950 dark:bg-primary-400"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${Math.min(100, (item.score / item.fullMark) * 100)}%` }}
+                  transition={{ duration: 0.6, delay: index * 0.05 }}
+                />
+              </div>
+            </div>
+          ))}
+        </motion.section>
+
+        {analysis.strengths && analysis.strengths.length > 0 && (
+          <motion.section
+            className="grid gap-3 md:grid-cols-2"
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            {analysis.strengths.map((s: string, i: number) => (
+              <div key={i} className="rounded-[1.4rem] border border-emerald-200/80 bg-emerald-50/80 p-5 text-emerald-900 dark:border-emerald-900/50 dark:bg-emerald-950/30 dark:text-emerald-200">
+                <p className="text-xs font-black uppercase tracking-[0.22em] opacity-60">Strength {i + 1}</p>
+                <p className="mt-2 font-bold leading-7">{s}</p>
+              </div>
+            ))}
+          </motion.section>
+        )}
+
+        <motion.section
+          className="app-card p-6"
+          initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-6">
-            <Target className="w-5 h-5" />
-            <span className="font-semibold">多维度评分</span>
+          <div className="mb-6 flex items-center gap-2 text-slate-500 dark:text-slate-400">
+            <CheckCircle2 className="h-5 w-5" />
+            <span className="font-black">改进路线</span>
+            <span className="text-sm">({analysis.suggestions?.length || 0} 条)</span>
           </div>
 
-          <RadarChart data={radarData} height={320} />
-
-          {/* 维度得分详情 */}
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <ScoreProgressBar
-              label="项目经验"
-              score={projectScore}
-              maxScore={40}
-              color="bg-purple-500"
-              delay={0.3}
-              className="col-span-2"
-            />
-            <ScoreProgressBar
-              label="技能匹配"
-              score={skillMatchScore}
-              maxScore={20}
-              color="bg-blue-500"
-              delay={0.4}
-            />
-            <ScoreProgressBar
-              label="内容完整性"
-              score={contentScore}
-              maxScore={15}
-              color="bg-emerald-500"
-              delay={0.5}
-            />
-            <ScoreProgressBar
-              label="结构清晰度"
-              score={structureScore}
-              maxScore={15}
-              color="bg-cyan-500"
-              delay={0.6}
-            />
-            <ScoreProgressBar
-              label="表达专业性"
-              score={expressionScore}
-              maxScore={10}
-              color="bg-orange-500"
-              delay={0.7}
-            />
+          <div className="space-y-6">
+            {suggestionsByPriority.high.length > 0 && (
+              <SuggestionSection priority="高" suggestions={suggestionsByPriority.high} getPriorityColor={getPriorityColor} getPriorityBadgeColor={getPriorityBadgeColor} getCategoryColor={getCategoryColor} delay={0.3} />
+            )}
+            {suggestionsByPriority.medium.length > 0 && (
+              <SuggestionSection priority="中" suggestions={suggestionsByPriority.medium} getPriorityColor={getPriorityColor} getPriorityBadgeColor={getPriorityBadgeColor} getCategoryColor={getCategoryColor} delay={0.4} />
+            )}
+            {suggestionsByPriority.low.length > 0 && (
+              <SuggestionSection priority="低" suggestions={suggestionsByPriority.low} getPriorityColor={getPriorityColor} getPriorityBadgeColor={getPriorityBadgeColor} getCategoryColor={getCategoryColor} delay={0.5} />
+            )}
+            {analysis.suggestions?.length === 0 && (
+              <div className="py-8 text-center text-slate-500 dark:text-slate-400">暂无改进建议</div>
+            )}
           </div>
-        </motion.div>
-      </div>
-
-      {/* 改进建议 - 按优先级分类 */}
-      <motion.div
-          className="bg-white dark:bg-slate-800 rounded-2xl p-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-      >
-        <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-6">
-          <CheckCircle2 className="w-5 h-5" />
-          <span className="font-semibold">改进建议</span>
-          <span className="text-sm text-slate-400 dark:text-slate-500">
-            ({analysis.suggestions?.length || 0} 条)
-          </span>
-        </div>
-
-        <div className="space-y-6">
-          {/* 高优先级 */}
-          {suggestionsByPriority.high.length > 0 && (
-            <SuggestionSection
-              priority="高"
-              suggestions={suggestionsByPriority.high}
-              getPriorityColor={getPriorityColor}
-              getPriorityBadgeColor={getPriorityBadgeColor}
-              getCategoryColor={getCategoryColor}
-              delay={0.4}
-            />
-          )}
-
-          {/* 中优先级 */}
-          {suggestionsByPriority.medium.length > 0 && (
-            <SuggestionSection
-              priority="中"
-              suggestions={suggestionsByPriority.medium}
-              getPriorityColor={getPriorityColor}
-              getPriorityBadgeColor={getPriorityBadgeColor}
-              getCategoryColor={getCategoryColor}
-              delay={0.5}
-            />
-          )}
-
-          {/* 低优先级 */}
-          {suggestionsByPriority.low.length > 0 && (
-            <SuggestionSection
-              priority="低"
-              suggestions={suggestionsByPriority.low}
-              getPriorityColor={getPriorityColor}
-              getPriorityBadgeColor={getPriorityBadgeColor}
-              getCategoryColor={getCategoryColor}
-              delay={0.6}
-            />
-          )}
-
-          {analysis.suggestions?.length === 0 && (
-              <div className="text-center py-8 text-slate-500 dark:text-slate-400">暂无改进建议</div>
-          )}
-        </div>
-      </motion.div>
+        </motion.section>
     </div>
   );
 }

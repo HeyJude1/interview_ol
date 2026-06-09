@@ -35,22 +35,22 @@ export default function InterviewConfigPanel({
 
   return (
       <motion.div
-      className="max-w-2xl mx-auto"
+      className="mx-auto max-w-3xl"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
     >
           <div
-              className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-sm dark:shadow-slate-900/50 border border-slate-100 dark:border-slate-700">
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-3">
+              className="app-card p-7 md:p-8">
+              <h2 className="mb-6 flex items-center gap-3 text-2xl font-black text-slate-950 dark:text-white">
                   <div
-                      className="w-10 h-10 bg-primary-100 dark:bg-primary-900/50 rounded-xl flex items-center justify-center">
-                      <svg className="w-5 h-5 text-primary-600 dark:text-primary-400" viewBox="0 0 24 24" fill="none">
+                      className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-primary-300 dark:bg-primary-400 dark:text-slate-950">
+                      <svg className="h-5 w-5 text-current" viewBox="0 0 24 24" fill="none">
               <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
               <circle cx="12" cy="12" r="6" stroke="currentColor" strokeWidth="2"/>
               <circle cx="12" cy="12" r="2" fill="currentColor"/>
             </svg>
           </div>
-          面试配置
+          演练配置
         </h2>
 
         {/* 未完成面试提示 */}
@@ -68,7 +68,7 @@ export default function InterviewConfigPanel({
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                 />
-                正在检查是否有未完成的面试...
+                正在检查是否有未完成的演练...
               </div>
             </motion.div>
           )}
@@ -90,7 +90,7 @@ export default function InterviewConfigPanel({
                   </svg>
                 </div>
                 <div className="flex-1">
-                    <h3 className="font-semibold text-amber-900 dark:text-amber-300 mb-1">检测到未完成的模拟面试</h3>
+                    <h3 className="font-semibold text-amber-900 dark:text-amber-300 mb-1">检测到未完成的模拟演练</h3>
                     <p className="text-sm text-amber-700 dark:text-amber-400">
                     已完成 {unfinishedSession.currentQuestionIndex} / {unfinishedSession.totalQuestions} 题
                   </p>
@@ -130,8 +130,8 @@ export default function InterviewConfigPanel({
                   onClick={() => onQuestionCountChange(count)}
                   className={`px-4 py-3 rounded-xl font-medium transition-all ${
                     questionCount === count
-                      ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/30'
-                        : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
+                      ? 'bg-slate-950 text-primary-300 shadow-lg shadow-slate-950/15 dark:bg-primary-400 dark:text-slate-950'
+                        : 'bg-slate-100 text-slate-600 hover:bg-primary-50 hover:text-primary-700 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-primary-900/20 dark:hover:text-primary-300'
                   }`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -144,11 +144,11 @@ export default function InterviewConfigPanel({
 
           <div className="mb-6">
               <label
-                  className="block text-sm font-semibold text-slate-600 dark:text-slate-400 mb-3">简历预览（前500字）</label>
+                  className="block text-sm font-semibold text-slate-600 dark:text-slate-400 mb-3">档案预览（前500字）</label>
               <textarea
               value={resumeText.substring(0, 500) + (resumeText.length > 500 ? '...' : '')}
               readOnly
-              className="w-full h-32 p-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-600 dark:text-slate-400 text-sm resize-none"
+              className="app-input h-36 w-full resize-none rounded-2xl p-4 text-sm text-slate-600 dark:text-slate-300"
             />
           </div>
 
@@ -172,7 +172,7 @@ export default function InterviewConfigPanel({
             <div className="flex justify-center gap-4">
                 <motion.button
               onClick={onBack}
-              className="px-6 py-3 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-all"
+              className="app-button-secondary rounded-2xl px-6 py-3 font-semibold"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -181,7 +181,7 @@ export default function InterviewConfigPanel({
             <motion.button
               onClick={onStart}
               disabled={isCreating}
-              className="px-8 py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl font-semibold shadow-lg shadow-primary-500/30 hover:shadow-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
+              className="app-button-primary flex items-center gap-2 rounded-2xl px-8 py-3 font-bold"
               whileHover={{ scale: isCreating ? 1 : 1.02, y: isCreating ? 0 : -1 }}
               whileTap={{ scale: isCreating ? 1 : 0.98 }}
             >
@@ -196,7 +196,7 @@ export default function InterviewConfigPanel({
                 </>
               ) : (
                 <>
-                  开始面试 →
+                  开始演练 →
                 </>
               )}
             </motion.button>

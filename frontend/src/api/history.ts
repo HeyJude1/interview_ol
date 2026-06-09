@@ -139,7 +139,7 @@ export const historyApi = {
   },
 
   /**
-   * 删除面试记录
+   * 删除演练记录
    */
   async deleteInterview(sessionId: string): Promise<void> {
     return request.delete(`/api/interview/sessions/${sessionId}`);

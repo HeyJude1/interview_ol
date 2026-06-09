@@ -13,3 +13,13 @@ qodana.yaml
 
 app/src/main/resources/application-dev.yml
 /docs
+
+# Local agent/runtime files
+/.agent
+/.agents/
+/.codex/
+/file/
+.env.example
+README copy.md
+/interview_qa/
+/skills-lock.json

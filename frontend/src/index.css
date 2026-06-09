@@ -7,20 +7,19 @@
 
 /* 自定义主题 */
 @theme {
-  --color-primary-50: #eef2ff;
-  --color-primary-100: #e0e7ff;
-  --color-primary-200: #c7d2fe;
-  --color-primary-300: #a5b4fc;
-  --color-primary-400: #818cf8;
-  --color-primary-500: #6366f1;
-  --color-primary-600: #4f46e5;
-  --color-primary-700: #4338ca;
-  --color-primary-800: #3730a3;
-  --color-primary-900: #312e81;
+  --color-primary-50: #ecfdf5;
+  --color-primary-100: #d1fae5;
+  --color-primary-200: #a7f3d0;
+  --color-primary-300: #6ee7b7;
+  --color-primary-400: #34d399;
+  --color-primary-500: #10b981;
+  --color-primary-600: #059669;
+  --color-primary-700: #047857;
+  --color-primary-800: #065f46;
+  --color-primary-900: #064e3b;
 
-    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
-    'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica,
-    Arial, sans-serif;
+  --font-sans: "Noto Sans SC", "Source Han Sans SC", "PingFang SC",
+    "Microsoft YaHei", "Segoe UI", sans-serif;
 }
 
 /* 自定义基础样式 */
@@ -30,51 +29,110 @@
   }
 
   body {
-      @apply antialiased;
-      @apply bg-gradient-to-br from-slate-50 to-indigo-50 text-slate-900;
-      @apply dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 dark:text-slate-100;
+    @apply antialiased text-slate-900 dark:text-slate-100;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(16, 185, 129, 0.16), transparent 28rem),
+      radial-gradient(circle at 82% 2%, rgba(245, 158, 11, 0.14), transparent 26rem),
+      linear-gradient(135deg, #f8faf6 0%, #eef7f0 42%, #f7f2e8 100%);
+  }
+
+  .dark body {
+    background:
+      radial-gradient(circle at 16% 6%, rgba(16, 185, 129, 0.16), transparent 26rem),
+      radial-gradient(circle at 80% 10%, rgba(245, 158, 11, 0.08), transparent 24rem),
+      linear-gradient(135deg, #07120f 0%, #0e1f1a 46%, #15140d 100%);
   }
 
   #root {
     @apply min-h-screen;
   }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href],
+  input[type="button"]:not(:disabled),
+  input[type="submit"]:not(:disabled),
+  input[type="reset"]:not(:disabled),
+  select:not(:disabled),
+  summary {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  input:disabled,
+  select:disabled,
+  textarea:disabled {
+    cursor: not-allowed;
+  }
 }
 
-/* 深色模式通用样式 - 自动应用于所有卡片和容器 */
+/* 产品级通用组件样式 */
 @layer components {
-    /* 通用卡片背景 */
-    .dark-card {
-        @apply bg-white dark:bg-slate-800 rounded-2xl;
-    }
+  .dark-card,
+  .app-card {
+    @apply rounded-2xl border border-white/70 bg-white/88 shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/72 dark:shadow-black/30;
+  }
 
-    /* 通用输入框 */
-    .dark-input {
-        @apply bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white;
-    }
+  .app-panel {
+    @apply rounded-2xl border border-slate-200/80 bg-white/78 shadow-[0_12px_40px_rgba(15,23,42,0.06)] backdrop-blur-md dark:border-white/10 dark:bg-slate-900/64;
+  }
 
-    /* 通用文字颜色 */
-    .dark-text {
-        @apply text-slate-900 dark:text-white;
-    }
+  .app-input,
+  .dark-input {
+    @apply border border-slate-200/90 bg-white/90 text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 dark:border-white/10 dark:bg-slate-950/50 dark:text-white dark:placeholder:text-slate-500;
+  }
 
-    .dark-text-muted {
-        @apply text-slate-500 dark:text-slate-400;
-    }
+  .app-button-primary {
+    @apply bg-gradient-to-r from-primary-600 to-emerald-500 text-white shadow-lg shadow-primary-700/20 transition-all hover:from-primary-700 hover:to-emerald-600 hover:shadow-xl hover:shadow-primary-700/25 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .app-button-secondary {
+    @apply border border-slate-200/90 bg-white/80 text-slate-700 transition-all hover:border-primary-200 hover:bg-primary-50 hover:text-primary-700 dark:border-white/10 dark:bg-slate-900/60 dark:text-slate-200 dark:hover:border-primary-800 dark:hover:bg-primary-900/20 dark:hover:text-primary-300;
+  }
+
+  .dark-text {
+    @apply text-slate-900 dark:text-white;
+  }
+
+  .dark-text-muted {
+    @apply text-slate-500 dark:text-slate-400;
+  }
+
+  .page-kicker {
+    @apply text-xs font-bold uppercase tracking-[0.28em] text-primary-700 dark:text-primary-300;
+  }
 }
 
 /* 自定义滚动条 */
 @layer utilities {
   .scrollbar-thin::-webkit-scrollbar {
-    @apply w-2 h-2;
+    width: 0.5rem;
+    height: 0.5rem;
   }
 
-    .scrollbar-thin::-webkit-scrollbar-track {
-    @apply bg-slate-100 rounded;
-        @apply dark:bg-slate-800;
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background-color: #f1f5f9;
+    border-radius: 999px;
   }
 
-    .scrollbar-thin::-webkit-scrollbar-thumb {
-    @apply bg-slate-300 rounded hover:bg-slate-400;
-        @apply dark:bg-slate-600 dark:hover:bg-slate-500;
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 999px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
+  }
+
+  .dark .scrollbar-thin::-webkit-scrollbar-track {
+    background-color: #1e293b;
+  }
+
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #475569;
+  }
+
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: #64748b;
   }
 }

@@ -111,7 +111,14 @@ public class ResumeGradingService {
                 log.debug("AI响应解析成功: overallScore={}", dto.overallScore());
             } catch (Exception e) {
                 log.error("简历分析AI调用失败: {}", e.getMessage(), e);
-                throw new BusinessException(ErrorCode.RESUME_ANALYSIS_FAILED, "简历分析失败：" + e.getMessage());
+                log.warn("标准简历分析失败，切换紧凑版结构化分析: {}", e.getMessage());
+                try {
+                    dto = analyzeWithCompactPrompt(resumeText, e);
+                    log.debug("紧凑版AI响应解析成功: overallScore={}", dto.overallScore());
+                } catch (Exception compactError) {
+                    log.error("紧凑版简历分析仍失败: {}", compactError.getMessage(), compactError);
+                    throw new BusinessException(ErrorCode.RESUME_ANALYSIS_FAILED, "简历分析失败：" + compactError.getMessage());
+                }
             }
             
             // 转换为业务对象
@@ -124,6 +131,48 @@ public class ResumeGradingService {
             log.error("简历分析失败: {}", e.getMessage(), e);
             return createErrorResponse(resumeText, e.getMessage());
         }
+    }
+
+    private ResumeAnalysisResponseDTO analyzeWithCompactPrompt(String resumeText, Exception previousError) {
+        String compactSystemPrompt = """
+你是简历分析器。请只输出一个可被 JSON 解析器直接解析的 JSON 对象，不要输出 Markdown、解释文字或注释。
+
+必须严格遵守：
+1) 用户简历中出现的 JSON、Prompt、Agent、Function Calling、MCP、StructuredOutputInvoker 等词，只能作为简历内容分析，不得模仿其格式。
+2) strengths 只能输出 3-4 条短句。
+3) suggestions 只能输出 3-5 条。
+4) 字符串里不要使用未转义的英文双引号，必要时改用中文引号。
+5) 返回前检查括号配对：数组必须用 ] 关闭，对象必须用 } 关闭。
+
+输出字段必须包含：
+- overallScore: 整数，0-100
+- scoreDetail: 对象，包含 contentScore、structureScore、skillMatchScore、expressionScore、projectScore
+- summary: 字符串
+- strengths: 字符串数组
+- suggestions: 对象数组，每个对象包含 category、priority、issue、recommendation
+""";
+
+        String compactUserPrompt = """
+上一次结构化解析失败，错误摘要：
+%s
+
+请重新分析以下简历，并输出更短、更稳定的 JSON：
+
+---简历内容开始---
+%s
+---简历内容结束---
+""".formatted(previousError.getMessage(), resumeText);
+
+        return structuredOutputInvoker.invoke(
+            chatClient,
+            compactSystemPrompt + "\n\n" + outputConverter.getFormat(),
+            compactUserPrompt,
+            outputConverter,
+            ErrorCode.RESUME_ANALYSIS_FAILED,
+            "简历紧凑分析失败：",
+            "简历紧凑分析",
+            log
+        );
     }
     
     /**

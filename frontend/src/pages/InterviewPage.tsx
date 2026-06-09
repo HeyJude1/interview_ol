@@ -5,6 +5,7 @@ import ConfirmDialog from '../components/ConfirmDialog';
 import InterviewConfigPanel from '../components/InterviewConfigPanel';
 import InterviewChatPanel from '../components/InterviewChatPanel';
 import type {InterviewQuestion, InterviewSession} from '../types/interview';
+import {Mic2} from 'lucide-react';
 
 type InterviewStage = 'config' | 'interview';
 
@@ -188,7 +189,7 @@ export default function Interview({ resumeText, resumeId, onBack, onInterviewCom
           questionIndex: response.nextQuestion!.questionIndex
         }]);
       } else {
-        // 面试已完成，评估将在后台进行，跳转到面试记录页
+        // 面试已完成，评估将在后台进行，跳转到演练记录页
         onInterviewComplete();
       }
     } catch (err) {
@@ -206,7 +207,7 @@ export default function Interview({ resumeText, resumeId, onBack, onInterviewCom
     try {
       await interviewApi.completeInterview(session.sessionId);
       setShowCompleteConfirm(false);
-      // 面试已完成，评估将在后台进行，跳转到面试记录页
+      // 面试已完成，评估将在后台进行，跳转到演练记录页
       onInterviewComplete();
     } catch (err) {
       setError('提前交卷失败，请重试');
@@ -256,30 +257,26 @@ export default function Interview({ resumeText, resumeId, onBack, onInterviewCom
   };
 
   const stageSubtitles = {
-    config: '配置您的面试参数',
-    interview: '认真回答每个问题，展示您的实力'
+    config: '配置本轮演练节奏',
+    interview: '按真实面试节奏回答每个追问'
   };
 
     return (
     <div className="pb-10">
       {/* 页面头部 */}
         <motion.div
-        className="text-center mb-10"
+        className="mb-8 text-center"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2 flex items-center justify-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
-            <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none">
-              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M19 10v2a7 7 0 0 1-14 0v-2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <line x1="12" y1="19" x2="12" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <line x1="8" y1="23" x2="16" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+          <p className="page-kicker mb-3">Live Mock Interview</p>
+            <h1 className="flex items-center justify-center gap-3 text-3xl font-black tracking-tight text-slate-950 dark:text-white md:text-4xl">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-primary-300 dark:bg-primary-400 dark:text-slate-950">
+            <Mic2 className="h-6 w-6" />
           </div>
-          模拟面试
+          模拟演练
         </h1>
-            <p className="text-slate-500 dark:text-slate-400">{stageSubtitles[stage]}</p>
+            <p className="mt-3 text-slate-600 dark:text-slate-400">{stageSubtitles[stage]}</p>
       </motion.div>
 
         <AnimatePresence mode="wait" initial={false}>

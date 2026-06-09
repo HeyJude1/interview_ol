@@ -221,8 +221,8 @@ export default function ResumeDetailPage({ resumeId, onBack, onStartInterview }:
 
   const latestAnalysis = resume.analyses?.[0];
   const tabs = [
-    { id: 'analysis' as const, label: '简历分析', icon: CheckSquare },
-    { id: 'interview' as const, label: '面试记录', icon: MessageSquare, count: resume.interviews?.length || 0 },
+    { id: 'analysis' as const, label: '能力诊断', icon: CheckSquare },
+    { id: 'interview' as const, label: '演练记录', icon: MessageSquare, count: resume.interviews?.length || 0 },
   ];
 
   return (
@@ -232,19 +232,20 @@ export default function ResumeDetailPage({ resumeId, onBack, onStartInterview }:
       className="w-full"
     >
       {/* 顶部导航栏 */}
-      <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
             <motion.button
             onClick={detailView === 'interviewDetail' ? handleBackToInterviewList : onBack}
-            className="w-10 h-10 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-300 transition-all shadow-sm"
+            className="app-button-secondary flex h-11 w-11 items-center justify-center rounded-2xl"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             <ChevronLeft className="w-5 h-5" />
           </motion.button>
           <div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-              {detailView === 'interviewDetail' ? `面试详情 #${selectedInterview?.sessionId?.slice(-6) || ''}` : resume.filename}
+              <p className="page-kicker mb-2">{detailView === 'interviewDetail' ? 'Interview Report' : 'Resume Dossier'}</p>
+              <h2 className="text-2xl font-black tracking-tight text-slate-950 dark:text-white">
+              {detailView === 'interviewDetail' ? `演练详情 #${selectedInterview?.sessionId?.slice(-6) || ''}` : resume.filename}
             </h2>
               <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
               <Clock className="w-4 h-4" />
@@ -261,7 +262,7 @@ export default function ResumeDetailPage({ resumeId, onBack, onStartInterview }:
             <motion.button
               onClick={() => handleExportInterviewPdf(selectedInterview.sessionId)}
               disabled={exporting === selectedInterview.sessionId}
-              className="px-5 py-2.5 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-xl text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-50 transition-all disabled:opacity-50 flex items-center gap-2"
+              className="app-button-secondary flex items-center gap-2 rounded-2xl px-5 py-2.5 font-semibold disabled:opacity-50"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -272,12 +273,12 @@ export default function ResumeDetailPage({ resumeId, onBack, onStartInterview }:
           {detailView !== 'interviewDetail' && (
             <motion.button
               onClick={() => onStartInterview(resume.resumeText, resumeId)}
-              className="px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl font-medium shadow-lg shadow-primary-500/30 hover:shadow-xl transition-all flex items-center gap-2"
+              className="app-button-primary flex items-center gap-2 rounded-2xl px-5 py-2.5 font-bold"
               whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.98 }}
             >
               <Mic className="w-4 h-4" />
-              开始模拟面试
+              开始模拟演练
             </motion.button>
           )}
         </div>
@@ -285,20 +286,20 @@ export default function ResumeDetailPage({ resumeId, onBack, onStartInterview }:
 
       {/* 标签页切换 - 仅在非面试详情时显示 */}
       {detailView !== 'interviewDetail' && (
-          <div className="bg-white dark:bg-slate-800 rounded-2xl p-2 mb-6 inline-flex gap-1">
+          <div className="app-panel mb-6 inline-flex gap-1 p-2">
           {tabs.map((tab) => (
             <motion.button
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
               className={`relative px-6 py-3 rounded-xl font-medium flex items-center gap-2 transition-colors
-                ${activeTab === tab.id ? 'text-primary-600 dark:text-primary-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
+                ${activeTab === tab.id ? 'text-slate-950 dark:text-white' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'}`}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
               {activeTab === tab.id && (
                 <motion.div
                   layoutId="activeTab"
-                  className="absolute inset-0 bg-primary-50 dark:bg-primary-900 rounded-xl"
+                  className="absolute inset-0 rounded-xl bg-primary-50 dark:bg-primary-900/30"
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                 />
               )}

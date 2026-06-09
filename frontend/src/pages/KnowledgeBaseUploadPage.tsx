@@ -28,16 +28,28 @@ export default function KnowledgeBaseUploadPage({ onUploadComplete, onBack }: Kn
 
   return (
     <FileUploadCard
-      title="上传知识库"
-      subtitle="上传文档，AI 将基于知识库内容回答您的问题"
+      title="导入资料源"
+      subtitle="上传技术文档、项目材料或面试题库，后续检索陪练会基于这些资料回答"
       accept=".pdf,.doc,.docx,.txt,.md"
       formatHint="支持 PDF、DOCX、DOC、TXT、MD"
       maxSizeHint="最大 50MB"
       uploading={uploading}
       uploadButtonText="开始上传"
-      selectButtonText="选择文件"
+      selectButtonText="选择资料"
+      deckKicker="Knowledge Intake Deck"
+      workflowSteps={[
+        ['01', '选择资料', '导入文档原件'],
+        ['02', '构建索引', '异步生成向量'],
+        ['03', '进入实验台', '用于检索陪练'],
+      ]}
+      queueDescription="将资料源先放入索引队列，再从右侧启动上传和向量化任务。"
+      currentFileHint="通过选择资料按钮装载参考材料"
+      emptyStateDescription="使用右上角的选择资料按钮添加本地文档，装载后会在这里显示待索引任务。"
+      routeTitle="索引路线"
+      routeExitHint="完成后进入知识库资料架"
+      launchDescription="文件装载后即可入库，向量索引会在后台继续构建。"
       showNameInput={true}
-      nameLabel="知识库名称（可选）"
+      nameLabel="资料源名称（可选）"
       namePlaceholder="留空则使用文件名"
       error={error}
       onUpload={handleUpload}

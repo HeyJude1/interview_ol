@@ -36,7 +36,7 @@ public class ResumeUploadService {
     private final AnalyzeStreamProducer analyzeStreamProducer;
     private final ResumeRepository resumeRepository;
 
-    private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    private static final long MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 
     /**
      * 上传并分析简历（异步）

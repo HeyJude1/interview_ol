@@ -3,7 +3,7 @@ import type { UploadResponse } from '../types/resume';
 
 export const resumeApi = {
   /**
-   * 上传简历并获取分析结果
+   * 导入候选材料并获取诊断结果
    */
   async uploadAndAnalyze(file: File): Promise<UploadResponse> {
     const formData = new FormData();

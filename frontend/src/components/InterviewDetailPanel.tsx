@@ -1,4 +1,4 @@
-import {useMemo, useState} from 'react';
+import {useState} from 'react';
 import {AnimatePresence, motion} from 'framer-motion';
 import {getScoreColor} from '../utils/score';
 import type {InterviewDetail} from '../api/history';
@@ -32,41 +32,28 @@ export default function InterviewDetailPanel({ interview }: InterviewDetailPanel
     });
   };
 
-  // 计算圆环进度
-  const { scorePercent, circumference, strokeDashoffset } = useMemo(() => {
-    const percent = interview.overallScore !== null ? (interview.overallScore / 100) * 100 : 0;
-    const circ = 2 * Math.PI * 54; // r=54
-    const offset = circ - (percent / 100) * circ;
-    return { scorePercent: percent, circumference: circ, strokeDashoffset: offset };
-  }, [interview.overallScore]);
-
   return (
-      <motion.div
+    <motion.div
       className="space-y-6"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
     >
-      {/* 评分卡片 */}
-        <ScoreCard
+      <ScoreCard
         score={interview.overallScore}
         feedback={interview.overallFeedback}
-        scorePercent={scorePercent}
-        circumference={circumference}
-        strokeDashoffset={strokeDashoffset}
       />
 
-      {/* 表现优势 */}
-      {interview.strengths && interview.strengths.length > 0 && (
-        <StrengthsSection strengths={interview.strengths} />
-      )}
+      <div className="grid gap-4 lg:grid-cols-2">
+        {interview.strengths && interview.strengths.length > 0 && (
+          <StrengthsSection strengths={interview.strengths} />
+        )}
 
-      {/* 改进建议 */}
-      {interview.improvements && interview.improvements.length > 0 && (
-        <ImprovementsSection improvements={interview.improvements} />
-      )}
+        {interview.improvements && interview.improvements.length > 0 && (
+          <ImprovementsSection improvements={interview.improvements} />
+        )}
+      </div>
 
-      {/* 问答记录详情 */}
-        <QuestionsSection
+      <QuestionsSection
         answers={interview.answers || []}
         expandedQuestions={expandedQuestions}
         toggleQuestion={toggleQuestion}
@@ -79,61 +66,46 @@ export default function InterviewDetailPanel({ interview }: InterviewDetailPanel
 function ScoreCard({
   score,
   feedback,
-  // scorePercent, // 暂时未使用
-  circumference,
-  strokeDashoffset
 }: {
   score: number | null;
   feedback: string | null;
-  scorePercent: number;
-  circumference: number;
-  strokeDashoffset: number;
 }) {
+  const scoreValue = score ?? 0;
+
   return (
-    <div className="bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 rounded-2xl p-8 text-white">
-      <div className="flex flex-col items-center text-center">
-        {/* 圆环进度条 */}
-        <div className="relative w-32 h-32 mb-6">
-          <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
-            <circle
-              cx="60"
-              cy="60"
-              r="54"
-              stroke="rgba(255,255,255,0.2)"
-              strokeWidth="8"
-              fill="none"
-            />
-            <motion.circle
-              cx="60"
-              cy="60"
-              r="54"
-              stroke="white"
-              strokeWidth="8"
-              fill="none"
-              strokeLinecap="round"
-              strokeDasharray={circumference}
-              initial={{ strokeDashoffset: circumference }}
-              animate={{ strokeDashoffset }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
-            />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <motion.span
-              className="text-4xl font-bold"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              {score ?? '-'}
-            </motion.span>
-            <span className="text-sm text-white/70">总分</span>
+    <div className="overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-[0_24px_70px_rgba(15,23,42,0.18)] dark:bg-primary-400 dark:text-slate-950">
+      <div className="grid gap-0 lg:grid-cols-[1fr_220px]">
+        <div className="p-7 md:p-9">
+          <p className="text-xs font-black uppercase tracking-[0.24em] text-primary-300 dark:text-slate-950/60">Review Transcript</p>
+          <h3 className="mt-4 text-3xl font-black">演练复盘手稿</h3>
+          <p className="mt-4 max-w-4xl text-lg leading-8 opacity-85">
+            {feedback || '表现良好，展示了扎实的技术基础。'}
+          </p>
+        </div>
+        <div className="flex items-center justify-center border-t border-white/10 bg-white/8 p-7 lg:border-l lg:border-t-0 dark:bg-slate-950/10">
+          <div className="w-full">
+            <p className="text-xs font-black uppercase tracking-[0.22em] opacity-60">Score</p>
+            <div className="mt-3 flex items-end gap-2">
+              <motion.span
+                className="text-6xl font-black leading-none"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                {score ?? '-'}
+              </motion.span>
+              <span className="pb-2 text-sm font-bold opacity-60">/100</span>
+            </div>
+            <div className="mt-5 h-3 overflow-hidden rounded-full bg-white/15 dark:bg-slate-950/20">
+              <motion.div
+                className="h-full rounded-full bg-primary-300 dark:bg-slate-950"
+                initial={{ width: 0 }}
+                animate={{ width: `${scoreValue}%` }}
+                transition={{ duration: 0.8 }}
+              />
+            </div>
           </div>
         </div>
-
-        <h3 className="text-2xl font-bold mb-3">面试评估</h3>
-        <p className="text-white/90 max-w-2xl leading-relaxed">
-          {feedback || '表现良好，展示了扎实的技术基础。'}
-        </p>
       </div>
     </div>
   );
@@ -143,12 +115,12 @@ function ScoreCard({
 function StrengthsSection({ strengths }: { strengths: string[] }) {
   return (
       <motion.div
-          className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm"
+          className="rounded-[1.5rem] border border-emerald-200/80 bg-emerald-50/80 p-5 dark:border-emerald-900/50 dark:bg-emerald-950/30"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
     >
-        <h4 className="font-semibold text-emerald-600 dark:text-emerald-400 mb-4 flex items-center gap-2">
+        <h4 className="mb-4 flex items-center gap-2 font-black text-emerald-700 dark:text-emerald-300">
         <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
           <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           <polyline points="22,4 12,14.01 9,11.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -171,12 +143,12 @@ function StrengthsSection({ strengths }: { strengths: string[] }) {
 function ImprovementsSection({ improvements }: { improvements: string[] }) {
   return (
       <motion.div
-          className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm"
+          className="rounded-[1.5rem] border border-amber-200/80 bg-amber-50/80 p-5 dark:border-amber-900/50 dark:bg-amber-950/30"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
     >
-        <h4 className="font-semibold text-amber-600 dark:text-amber-400 mb-4 flex items-center gap-2">
+        <h4 className="mb-4 flex items-center gap-2 font-black text-amber-700 dark:text-amber-300">
         <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
           <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
           <line x1="12" y1="8" x2="12" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -208,12 +180,10 @@ function QuestionsSection({
 }) {
   return (
     <div>
-      <h4 className="font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-        <svg className="w-5 h-5 text-primary-500" viewBox="0 0 24 24" fill="none">
-          <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-        问答记录详情
-      </h4>
+      <div className="mb-5">
+        <p className="page-kicker">Answer Timeline</p>
+        <h4 className="mt-2 text-3xl font-black text-slate-950 dark:text-white">问答时间线</h4>
+      </div>
 
       <div className="space-y-4">
         {answers.map((answer, idx) => (
@@ -244,23 +214,23 @@ function QuestionCard({
 }) {
   return (
       <motion.div
-          className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm overflow-hidden"
+          className="relative overflow-hidden rounded-[1.5rem] border border-white/70 bg-white/86 shadow-[0_16px_50px_rgba(15,23,42,0.07)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/70"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 + index * 0.05 }}
     >
       {/* 问题头部 */}
         <div
-            className="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+            className="flex cursor-pointer items-center justify-between px-5 py-4 transition-colors hover:bg-primary-50/50 dark:hover:bg-white/5"
         onClick={onToggle}
       >
         <div className="flex items-center gap-3">
           <span
-              className="w-8 h-8 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg flex items-center justify-center text-sm font-semibold">
+              className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-sm font-black text-primary-300 dark:bg-primary-400 dark:text-slate-950">
             {answer.questionIndex + 1}
           </span>
           <span
-              className="px-3 py-1 bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-xs font-medium rounded-full">
+              className="rounded-full bg-primary-50 px-3 py-1 text-xs font-bold text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
             {answer.category || '综合'}
           </span>
           <span className={`font-semibold ${getScoreColor(answer.score, [80, 60])}`}>
@@ -280,7 +250,7 @@ function QuestionCard({
 
       {/* 问题内容 */}
       <div className="px-5 pb-2">
-        <p className="text-slate-800 dark:text-white font-medium leading-relaxed">{answer.question}</p>
+        <p className="text-lg font-bold leading-relaxed text-slate-950 dark:text-white">{answer.question}</p>
       </div>
 
       {/* 展开内容 */}
@@ -295,7 +265,7 @@ function QuestionCard({
           >
             <div className="px-5 pb-5 space-y-4">
               {/* 你的回答 */}
-              <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
+              <div className="rounded-2xl bg-slate-50 p-4 dark:bg-white/5">
                 <p className="text-sm text-slate-500 dark:text-slate-400 mb-2 flex items-center gap-1">
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
                     <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -328,7 +298,7 @@ function QuestionCard({
               {/* 参考答案 */}
               {answer.referenceAnswer && (
                   <div
-                      className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 border border-slate-100 dark:border-slate-600">
+                      className="rounded-2xl border border-slate-100 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
                     <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 flex items-center gap-2 font-medium">
                     <svg className="w-4 h-4 text-primary-500" viewBox="0 0 24 24" fill="none">
                       <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>

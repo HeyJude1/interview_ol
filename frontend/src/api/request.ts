@@ -45,14 +45,18 @@ instance.interceptors.response.use(
   (error) => {
     // 有响应的情况：后端返回了结果（即使是错误）
     if (error.response) {
-      const { data } = error.response;
+      const { data, status } = error.response;
       // 尝试解析 Result 格式
       if (data && typeof data === 'object' && 'code' in data && 'message' in data) {
         const result = data as Result;
         return Promise.reject(new Error(result.message || '请求失败'));
       }
+      if (typeof data === 'string' && data.trim()) {
+        const message = data.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+        return Promise.reject(new Error(message.slice(0, 120) || `请求失败，HTTP ${status}`));
+      }
       // 响应格式不对
-      return Promise.reject(new Error('请求失败，请重试'));
+      return Promise.reject(new Error(`请求失败，HTTP ${status || '未知状态'}`));
     }
 
     // 没有响应的情况：真正的网络错误或连接被重置

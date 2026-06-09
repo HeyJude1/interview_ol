@@ -23,7 +23,7 @@ export default function UploadPage({ onUploadComplete }: UploadPageProps) {
         throw new Error('上传失败，请重试');
       }
 
-      // 上传成功，跳转到简历库（分析在后台进行）
+      // 上传成功，跳转到档案看板（分析在后台进行）
       onUploadComplete(data.storage.resumeId);
     } catch (err) {
       setError(getErrorMessage(err));
@@ -33,14 +33,13 @@ export default function UploadPage({ onUploadComplete }: UploadPageProps) {
 
   return (
     <FileUploadCard
-      title="开始您的 AI 模拟面试"
-      subtitle="上传 PDF 或 Word 简历，AI 将为您定制专属面试方案"
+      title="导入一份候选人档案，生成专属追问地图"
+      subtitle="Interview OL 会抽取履历信号、项目线索和风险点，为后续演练准备更贴近真实面试的追问路径。"
       accept=".pdf,.doc,.docx,.txt"
       formatHint="支持 PDF, DOCX, TXT"
-      maxSizeHint="最大 10MB"
+      maxSizeHint="最大 20MB"
       uploading={uploading}
-      uploadButtonText="开始上传"
-      selectButtonText="选择简历文件"
+      uploadButtonText="生成档案"
       error={error}
       onUpload={handleUpload}
     />

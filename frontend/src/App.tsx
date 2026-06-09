@@ -26,7 +26,7 @@ function UploadPageWrapper() {
   const navigate = useNavigate();
 
   const handleUploadComplete = (resumeId: number) => {
-    // 异步模式：上传成功后跳转到简历库，让用户在列表中查看分析状态
+    // 异步模式：上传成功后跳转到档案看板，让用户在列表中查看分析状态
     navigate('/history', { state: { newResumeId: resumeId } });
   };
 
@@ -110,7 +110,7 @@ function InterviewWrapper() {
   };
 
   const handleInterviewComplete = () => {
-    // 面试完成后跳转到面试记录页
+    // 面试完成后跳转到演练复盘页
     navigate('/interviews');
   };
 
@@ -147,25 +147,25 @@ function App() {
             {/* 上传页面 */}
             <Route path="upload" element={<UploadPageWrapper />} />
 
-            {/* 历史记录列表（简历库） */}
+            {/* 历史记录列表（档案看板） */}
             <Route path="history" element={<HistoryListWrapper />} />
 
             {/* 简历详情 */}
             <Route path="history/:resumeId" element={<ResumeDetailWrapper />} />
 
-            {/* 面试记录列表 */}
+            {/* 演练记录列表 */}
             <Route path="interviews" element={<InterviewHistoryWrapper />} />
 
             {/* 模拟面试 */}
             <Route path="interview/:resumeId" element={<InterviewWrapper />} />
 
-            {/* 知识库管理 */}
+            {/* 知识库 */}
             <Route path="knowledgebase" element={<KnowledgeBaseManagePageWrapper />} />
 
             {/* 知识库上传 */}
             <Route path="knowledgebase/upload" element={<KnowledgeBaseUploadPageWrapper />} />
 
-            {/* 问答助手（知识库聊天） */}
+            {/* 检索陪练（资料聊天） */}
             <Route path="knowledgebase/chat" element={<KnowledgeBaseQueryPageWrapper />} />
           </Route>
         </Routes>
@@ -174,7 +174,7 @@ function App() {
   );
 }
 
-// 面试记录页面包装器
+// 演练记录页面包装器
 function InterviewHistoryWrapper() {
   const navigate = useNavigate();
 
@@ -204,7 +204,7 @@ function InterviewHistoryWrapper() {
   return <InterviewHistoryPage onBack={handleBack} onViewInterview={handleViewInterview} />;
 }
 
-// 知识库管理页面包装器
+// 知识库页面包装器
 function KnowledgeBaseManagePageWrapper() {
   const navigate = useNavigate();
 

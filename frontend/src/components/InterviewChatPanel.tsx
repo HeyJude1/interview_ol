@@ -53,10 +53,10 @@ export default function InterviewChatPanel({
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-200px)] max-w-4xl mx-auto">
+    <div className="mx-auto flex h-[calc(100vh-220px)] max-w-5xl flex-col md:h-[calc(100vh-190px)]">
       {/* 进度条 */}
         <div
-            className="bg-white dark:bg-slate-800 rounded-2xl p-6 mb-4 shadow-sm dark:shadow-slate-900/50 border border-slate-100 dark:border-slate-700">
+            className="app-card mb-4 p-5">
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
             题目 {currentQuestion ? currentQuestion.questionIndex + 1 : 0} / {session.totalQuestions}
@@ -65,9 +65,9 @@ export default function InterviewChatPanel({
             {Math.round(progress)}%
           </span>
         </div>
-            <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+            <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
           <motion.div
-            className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full"
+            className="h-full rounded-full bg-gradient-to-r from-primary-600 via-emerald-400 to-amber-400"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.3 }}
@@ -77,7 +77,7 @@ export default function InterviewChatPanel({
 
       {/* 聊天区域 */}
         <div
-            className="flex-1 bg-white dark:bg-slate-800 rounded-2xl shadow-sm dark:shadow-slate-900/50 overflow-hidden flex flex-col min-h-0 border border-slate-100 dark:border-slate-700">
+            className="app-card flex min-h-0 flex-1 flex-col overflow-hidden">
         <Virtuoso
           ref={virtuosoRef}
           data={messages}
@@ -92,22 +92,22 @@ export default function InterviewChatPanel({
         />
 
         {/* 输入区域 */}
-            <div className="border-t border-slate-200 dark:border-slate-600 p-4 bg-slate-50 dark:bg-slate-700/50">
-          <div className="flex gap-3">
+            <div className="border-t border-slate-200/80 bg-slate-50/70 p-4 dark:border-white/10 dark:bg-slate-950/40">
+          <div className="flex flex-col gap-3 md:flex-row">
             <textarea
               value={answer}
               onChange={(e) => onAnswerChange(e.target.value)}
               onKeyDown={handleKeyPress}
               placeholder="输入你的回答... (Ctrl/Cmd + Enter 提交)"
-              className="flex-1 px-4 py-3 border border-slate-300 dark:border-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500"
+              className="app-input flex-1 resize-none rounded-2xl px-4 py-3"
               rows={3}
               disabled={isSubmitting}
             />
-            <div className="flex flex-col gap-2">
+            <div className="flex gap-2 md:flex-col">
               <motion.button
                 onClick={onSubmit}
                 disabled={!answer.trim() || isSubmitting}
-                className="px-6 py-3 bg-primary-500 text-white rounded-xl font-medium hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="app-button-primary flex items-center justify-center gap-2 rounded-2xl px-6 py-3 font-bold"
                 whileHover={{ scale: isSubmitting || !answer.trim() ? 1 : 1.02 }}
                 whileTap={{ scale: isSubmitting || !answer.trim() ? 1 : 0.98 }}
               >
@@ -130,7 +130,7 @@ export default function InterviewChatPanel({
               <motion.button
                 onClick={() => onShowCompleteConfirm(true)}
                 disabled={isSubmitting}
-                className="px-6 py-3 bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl font-medium hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                className="app-button-secondary rounded-2xl px-6 py-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50"
                 whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
                 whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
               >
@@ -154,21 +154,21 @@ function MessageBubble({ message }: { message: Message }) {
         className="flex items-start gap-3"
       >
           <div
-              className="w-8 h-8 bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center flex-shrink-0">
-              <User className="w-4 h-4 text-primary-600 dark:text-primary-400"/>
+              className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-primary-300 dark:bg-primary-400 dark:text-slate-950">
+              <User className="h-4 w-4 text-current"/>
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
               <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">面试官</span>
             {message.category && (
                 <span
-                    className="px-2 py-0.5 bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-xs rounded-full">
+                    className="rounded-full bg-primary-50 px-2 py-0.5 text-xs font-semibold text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
                 {message.category}
               </span>
             )}
           </div>
             <div
-                className="bg-slate-100 dark:bg-slate-700 rounded-2xl rounded-tl-none p-4 text-slate-800 dark:text-slate-200 leading-relaxed">
+                className="rounded-2xl rounded-tl-sm border border-slate-200/80 bg-slate-50 p-4 leading-relaxed text-slate-800 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
             {message.content}
           </div>
         </div>
@@ -183,7 +183,7 @@ function MessageBubble({ message }: { message: Message }) {
       className="flex items-start gap-3 justify-end"
     >
       <div className="flex-1 max-w-[80%]">
-        <div className="bg-primary-500 text-white rounded-2xl rounded-tr-none p-4 leading-relaxed">
+        <div className="rounded-2xl rounded-tr-sm bg-slate-950 p-4 leading-relaxed text-primary-50 shadow-lg shadow-slate-950/10 dark:bg-primary-400 dark:text-slate-950">
           {message.content}
         </div>
       </div>
