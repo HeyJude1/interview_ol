@@ -127,41 +127,6 @@ AI 从项目技术深度（40 分）、技能匹配度（20 分）、内容完�
 
 **AI**：阿里云 DashScope (qwen-plus) · text-embedding-v3 · OpenAI 兼容协议
 
-## 项目结构
-
-```
-interview-guide/
-├── app/src/main/java/interview/guide/
-│   ├── App.java                        # 启动入口
-│   ├── common/
-│   │   ├── async/                      # Redis Stream 消费/生产模板
-│   │   ├── annotation/                 # @RateLimit 注解
-│   │   ├── aspect/                     # RateLimitAspect 切面
-│   │   ├── config/                     # 应用配置
-│   │   ├── exception/                  # 全局异常处理 + 错误码
-│   │   └── result/                     # 统一响应体
-│   ├── infrastructure/
-│   │   ├── export/                     # PDF 报告导出
-│   │   ├── file/                       # 文件解析与存储
-│   │   ├── redis/                      # Redis 服务封装
-│   │   └── storage/                    # S3 对象存储
-│   └── modules/
-│       ├── interview/                  # 面试模块（会话、评估、报告）
-│       ├── knowledgebase/              # 知识库模块（向量化、RAG 问答）
-│       └── resume/                     # 简历模块（上传、分析、导出）
-├── app/src/main/resources/
-│   ├── application.yml                 # 应用配置
-│   ├── prompts/                        # 7 套 Prompt 模板
-│   └── scripts/rate_limit.lua          # 限流 Lua 脚本
-├── frontend/src/
-│   ├── api/                            # Axios 接口封装
-│   ├── components/                     # 通用组件
-│   ├── pages/                          # 8 个页面组件
-│   └── App.tsx                         # 路由配置
-├── docker-compose.yml                  # 6 服务编排
-└── app/Dockerfile                      # 多阶段构建
-```
-
 ## 开源协议
 
 AGPL-3.0 License

@@ -81,7 +81,7 @@ export default function Layout() {
                 </div>
                 <div>
                   <span className="block text-xl font-black tracking-tight text-slate-950 dark:text-white">Interview OL</span>
-                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">简历分析及面试平台 v1.3</span>
+                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">简历分析及面试平台 v1.4</span>
                 </div>
               </Link>
 
